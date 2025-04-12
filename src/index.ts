@@ -4,22 +4,17 @@ import path from 'path';
 import cors from 'cors';
 import { exec } from 'child_process';
 
-// Configuración de multer para guardar archivos en la carpeta 'uploads'
 const upload = multer({ dest: 'uploads/' });
-
 const app = express();
 const PORT = 3001;
 
-// Habilitar CORS para permitir solicitudes del frontend
 app.use(cors());
 app.use(express.json());
 
-// Endpoint para verificar el estado de la API
 app.get('/status', (req, res) => {
   res.json({ status: 'API Running' });
 });
 
-// Endpoint para subir archivos
 app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
@@ -29,7 +24,16 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.json({ message: 'File uploaded successfully', filename: req.file.originalname, filePath });
 });
 
-// Endpoint para apagar los contenedores
+// 🔧 Endpoint faltante para iniciar el deploy
+app.post('/deploy', (req, res) => {
+  exec('docker-compose up -d --build', (error, stdout, stderr) => {
+    if (error) {
+      return res.status(500).json({ message: 'Deploy failed', error: stderr });
+    }
+    res.json({ message: 'Deploy started', output: stdout });
+  });
+});
+
 app.post('/shutdown', (req, res) => {
   exec('docker-compose down', (error, stdout, stderr) => {
     if (error) {
