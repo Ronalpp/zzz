@@ -26,7 +26,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 // 🔧 Endpoint faltante para iniciar el deploy
 app.post('/deploy', (req, res) => {
-  exec('git pull && docker-compose build --no-cache && docker-compose up -d', (error, stdout, stderr) => {
+  exec('docker-compose build --no-cache && docker-compose up -d', (error, stdout, stderr) => {
     if (error) {
       return res.status(500).json({ message: 'Deploy failed', error: stderr });
     }
